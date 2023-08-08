@@ -61,7 +61,7 @@
 
 ## 🚀 Live Demo <a name="live-demo"></a>
 
-- [ReplIt](https://odinintronodejs--andrianarivo.repl.co/)
+- [ReplIt](https://odinintronodejs.andrianarivo.repl.co)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
