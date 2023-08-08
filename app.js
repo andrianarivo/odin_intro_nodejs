@@ -1,41 +1,41 @@
-require("dotenv").config();
-const fs = require("fs/promises")
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const expressLayouts = require('express-ejs-layouts');
 
-const axios = require("axios")
+const indexRouter = require('./routes/root');
 
-const EventEmitter = require("events");
+const app = express();
 
-const eventEmitter = new EventEmitter();
+// view engine setup
+app.use(expressLayouts);
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
-eventEmitter.on("start", () => {
-  console.log("Event emitter emitted start!")
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/', indexRouter);
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
 });
 
-console.log("hello, world!");
-console.log(`user id is: ${process.env.USER_ID}!`);
+// error handler
+app.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-axios.get('https://example.com/todos')
-    .then(res => { console.log(res.status); })
-    .catch(error => { console.log(error.response.status); });
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error');
+});
 
-async function example() {
-  const filename = "test.txt"
-  try {
-    const data = await fs.readFile(filename, 'utf8');
-    console.log(data);
-    const content = "New content in the file";
-    await fs.writeFile(filename, content);
-    console.log("Wrote some content");
-    const newData = await fs.readFile(filename, 'utf8');
-    console.log(newData);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-example();
-
-const url = new URL('/api', 'ws://12.32.03.90:9567');
-console.log(url.href);
-
-eventEmitter.emit("start");
+module.exports = app;
